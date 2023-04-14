@@ -1,3 +1,13 @@
 import { get2Pizzas } from './services/pizzaService.js';
+import express from "express"
+const app = express()
+const port = 3000
 
-await get2Pizzas();
+app.get('/', (req, res) => {
+  res.send('Hello World!')
+})
+
+app.listen(port, () => {
+  console.log(`Example app listening on port ${port}`)
+})
+await get2Pizzas();     
