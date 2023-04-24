@@ -80,6 +80,29 @@ app.Post("/", (req, res) =>
     return Ok(pizza);
 });
 
+app.Get("/{id}", (req, res) =>
+{
+    let respuesta = null;
+    let id = parseInt(req.params.id);
+    if (id <= 0)
+    {
+        respuesta = BadRequest();
+    }
+    else
+    {
+        Pizza p = BD.BuscarPizzaPorId(id);
+        if (p == null)
+        {
+            respuesta = NotFound();
+        }
+        else
+        {
+            respuesta = Ok(p);
+        }
+    }
+    return respuesta;
+});
+
 BD.BuscarPizzaPorId(id)
   .then(pizza => {
     const pizzaInfo = document.getElementById('pizza-info');
