@@ -1,5 +1,6 @@
-import express from "express"
-import pizza from "models/"
+import express from "express";
+import pizza from "../src/models/pizza.js";
+import BD from "pizzaService.js";
 const app = express()
 const port = 3000
 app.use(express.json());
@@ -17,14 +18,14 @@ app.put('/api/:id', (req, res)=>{
 })
 
 app.get('/', (req, res) => {
-  res.send('Hello World!')
+BD.GetAll
 })
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })
 
-app.Put("/{id}", (req, res) =>
+app.put("/{id}", (req, res) =>
 {
     let respuesta = null;
     let intRowsAffected;
@@ -49,7 +50,7 @@ app.Put("/{id}", (req, res) =>
     return respuesta;
 });
 
-app.Delete("/{id}", (req, res) =>
+app.delete("/{id}", (req, res) =>
 {
     let intRowsAffected;
     let respuesta = null;
@@ -73,15 +74,16 @@ app.Delete("/{id}", (req, res) =>
     return respuesta;
 });
 
-app.Post("/", (req, res) =>
+app.post("/", (req, res) =>
 {
     let pizza = req.body;
     BD.CrearPizzas(pizza);
     return Ok(pizza);
 });
 
-app.Get("/{id}", (req, res) =>
+app.get("/{id}", (req, res) =>
 {
+    const p = new pizza();
     let respuesta = null;
     let id = parseInt(req.params.id);
     if (id <= 0)
@@ -90,7 +92,7 @@ app.Get("/{id}", (req, res) =>
     }
     else
     {
-        Pizza p = BD.BuscarPizzaPorId(id);
+        p = BD.BuscarPizzaPorId(id);
         if (p == null)
         {
             respuesta = NotFound();
@@ -102,12 +104,3 @@ app.Get("/{id}", (req, res) =>
     }
     return respuesta;
 });
-
-BD.BuscarPizzaPorId(id)
-  .then(pizza => {
-    const pizzaInfo = document.getElementById('pizza-info');
-    pizzaInfo.innerHTML = `Nombre: ${pizza.nombre} <br> Precio: ${pizza.precio} <br> Tamaño: ${pizza.tamaño}`;
-  })
-  .catch(error => {
-    console.log('Error al buscar la pizza: ', error);
-  });

@@ -1,7 +1,11 @@
 import sql from 'mssql';
 import configDB from '../models/db.js';
-
-export const get2Pizzas = async () => {
+export const GetAll = async () =>
+{
+    const pizzas = sql.connect(configDB);
+    pizzas.executeSql('Select * From Pizzas')
+}
+export const ActualizarPizzas = async () => {
     const conn = await sql.connect(configDB);
     const pizza = new Pizza();
     pizza.nombre = 'Test';
