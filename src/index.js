@@ -1,84 +1,79 @@
 import express from "express";
 import pizza from "../src/models/pizza.js";
-import BD from "pizzaService.js";
+import {getAll,getById,create,update,deleteById} from './services/pizzaService.js';
 const app = express()
-const port = 3000
+const port = 5000
 app.use(express.json());
 
-app.put('/api/:id', (req, res)=>{
+app.get('/:id', async(req, res)=>{
+  let status = 200;
   const id = req.params.id;
-  console.log(id);
-  const pizza = new Pizza();
-
-  pizza.nombre = req.body.Nombre;
-  pizza.precio = req.body.Precio;
-
-  console.log(pizza);
-  res.send('Hola Mundo!')
+  if (id<0) status=400
+  else
+  {
+    const pizza = await getById(req.params.id)
+  }
+  res.status(status).send(pizzas);
 })
 
 app.get('/', (req, res) => {
-BD.GetAll
+    const pizzas = getAll();
+    res.status(200).send(pizzas);
 })
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })
 
-app.put("/{id}", (req, res) =>
+app.put("/{id}", async (req, res) =>
 {
-    let respuesta = null;
-    let intRowsAffected;
-    let id = parseInt(req.params.id);
-    let pizza = req.body;
-    if (pizza.Id != id)
+    let status = 200;
+    if(req.params.id < 0)
     {
-        respuesta = BadRequest();
+        status = 400;
     }
-    else
-    {
-        intRowsAffected = BD.ActualizarPizza(id, pizza);
-        if (intRowsAffected > 0)
-        {
-            respuesta = Ok(pizza);
-        }
-        else
-        {
-            respuesta = NotFound();
-        }
+    const id            = req.params.id;
+    const pizza         = new Pizza();
+    pizza.Nombre        = req.body.Nombre;
+    pizza.LibreGluten   = req.body.LibreGluten;
+    pizza.Importe       = req.body.Importe;
+    pizza.Descripcion   = req.body.Descripcion;
+    const changed = await update(pizza, id);
+    if(changed==null){
+        status = 404;
     }
-    return respuesta;
 });
 
 app.delete("/{id}", (req, res) =>
 {
-    let intRowsAffected;
-    let respuesta = null;
-    let id = parseInt(req.params.id);
-    if (id <= 0)
+    let status = 200;
+    const id = req.params.id;
+    let pizza = getById(req.params.id)
+    if (id<0) status=400
+    else if (pizza==null)
     {
-        respuesta = BadRequest();
+        status=404
     }
     else
     {
-        intRowsAffected = BD.BorrarPizzas(id);
-        if (intRowsAffected > 0)
-        {
-            respuesta = Ok();
-        }
-        else
-        {
-            respuesta = NotFound();
-        }
+      const pizza = deleteById(req.params.id)
     }
-    return respuesta;
+    res.status(status).send(pizzas);
 });
 
-app.post("/", (req, res) =>
+app.post("/", async (req, res) =>
 {
-    let pizza = req.body;
-    BD.CrearPizzas(pizza);
-    return Ok(pizza);
+    let status = 201;
+    const pizza = new Pizza();
+    pizza.Nombre = req.body.Nombre;
+    pizza.LibreGluten = req.body.LibreGluten;
+    pizza.Importe = req.body.Importe;
+    pizza.Descripcion = req.body.Descripcion;
+    const pizzaCreada = await create(pizza);
+    if(pizzaCreada==null){
+        status = 400;
+    }
+    res.status(status).send(pizzaCreada);
 });
 
 app.get("/{id}", (req, res) =>
