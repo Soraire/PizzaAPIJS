@@ -1,7 +1,7 @@
 export default class Pizza {
-    id;
-    descripcion;
-    nombre;
-    precio;
-    libreDeGluten;
+    Id;
+    Descripcion;
+    Nombre;
+    Precio;
+    LibreDeGluten;
 }
